@@ -1,0 +1,6 @@
+*.swp
+
+*.crt
+*.pem
+*.key
+*.idea

@@ -1,0 +1,29 @@
+version: "2.3"
+services:
+ registry:
+  image: registry:2
+  ports:
+    - "5000:5000"
+  volumes:
+    - ./ssl:/ssl
+    - ./data:/data
+  restart: always
+  environment:
+    - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/data
+    - REGISTRY_AUTH=token
+    - REGISTRY_AUTH_TOKEN_REALM=https://hub.cellery.com:5001/auth
+    - REGISTRY_AUTH_TOKEN_SERVICE="Docker registry"
+    - REGISTRY_AUTH_TOKEN_ISSUER="Auth Service"
+    - REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE=/ssl/domain.crt
+    - REGISTRY_HTTP_TLS_CERTIFICATE=/ssl/domain.crt
+    - REGISTRY_HTTP_TLS_KEY=/ssl/domain.key
+ dockerauth:
+   image: cesanta/docker_auth
+   ports:
+     - "5001:5001"
+   volumes:
+     - ./:/config:ro
+     - ./ssl:/ssl
+     - ./extensions:/extensions
+   command: -alsologtostderr=true -log_dir=/logs /config/extAuth.yml
+   restart: always

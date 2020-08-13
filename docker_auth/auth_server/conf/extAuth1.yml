@@ -1,0 +1,69 @@
+# A simple example. See reference.yml for explanation for explanation of all options.
+#
+ # auth:
+ #   token:
+ #     realm: "https://127.0.0.1:5001/auth"
+ #     service: "Docker registry"
+ #     issuer: "Acme auth server"
+ #     rootcertbundle: "/path/to/server.pem"
+
+server:
+  addr: ":5001"
+  certificate: "conf/domain.crt"
+  # certificate: "/ssl/localhost.crt"
+  key: "conf/domain.key"
+
+token:
+  issuer: "Auth Service"  # Must match issuer in the Registry config.
+  expiration: 900
+
+acl:
+  # This will allow authenticated users to pull/push
+    # - match: {account: "/.+/", type: "registry", name: "catalog"}
+    #   actions: ["*"]
+    #   comment: "Logged in users can query the catalog."
+  - match: {account: "madushajg"}
+    actions: ["*"]
+    comment: "madushajg has full access to everything."
+  # - match: {account: "/.+/", name: "${account}/*"}
+  #   actions: ["*"]
+  #   comment: "Logged in users have full access to images that are in their 'namespace'"
+  # - match:
+  #     account: "madushajg"
+  #   actions: ["push", "pull"]
+
+# ext_auth:
+#   command: "/extensions/authentication"  # Can be a relative path too; $PATH works.
+#   args: [""]
+
+# ext_authz:
+#   command: "/extensions/authorization"
+#   args: [""]
+
+# Google authentication.
+# ==! NB: DO NOT ENTER YOUR GOOGLE PASSWORD AT "docker login". IT WILL NOT WORK.
+# Instead, Auth server maintains a database of Google authentication tokens.
+# Go to the server's port as HTTPS with your browser and follow the "Login with Google account" link.
+# Once signed in, you will get a throw-away password which you can use for Docker login.
+google_auth:
+  # domain: "https://celleryhub.com"  # Optional. If set, only logins from this domain are accepted.
+  # client_id and client_secret for API access. Required.
+  # Follow instructions here: https://developers.google.com/identity/sign-in/web/devconsole-project
+  # NB: Make sure JavaScript origins are configured correctly, and that third-party
+  # cookies are not blocked in the browser being used to login.
+  client_id: "296553602317-ek7o2045ffmcbksekuatbhtm1r03o678.apps.googleusercontent.com"
+  # Either client_secret or client_secret_file is required. Use client_secret_file if you don't
+  # want to have sensitive information checked in.
+  client_secret: "N39jUewutJUf2-n2igeN-8y8"
+  # client_secret_file: "/path/to/client_secret.txt"
+  # Where to store server tokens. Required. 
+  token_db: "/Users/madushagunasekara/Projects/CelleruHubDA/tokens/google_tokens.ldb"
+  # How long to wait when talking to Google servers. Optional.
+  http_timeout: 10
+
+github_auth:
+  # organization: "wso2_cellery"
+  client_id: "6ea316c979f955c5e71d"
+  client_secret: "3bc1a697529aac4e1fa09b802f0c5c9b80861d77" # or client_secret_file
+  token_db: "/Users/madushagunasekara/Projects/CelleruHubDA/tokens/github_tokens.ldb"
+  registry_url: celleryhub.com:5000
